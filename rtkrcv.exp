@@ -1,0 +1,14 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+spawn ./rtkrcv
+expect ""
+send -- "start"
+expect ""
+send -- "yes"
+sleep 10
+send -- "shutdown"
+expect ""
+send -- "yes"
+expect eof

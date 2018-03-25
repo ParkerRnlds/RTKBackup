@@ -4,7 +4,7 @@ import time
 while True:
     serialcmd = chr(0xAA) + chr(0x0A) + chr(0x0A) + chr(0x7F)##
     print("this shit IS working1")
-    s = serial.Serial("/dev/serial0", 9600, timeout=0.5)
+    s = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
     print("this shit is not working2")
     time.sleep(2)
     print("this shit is not working3")

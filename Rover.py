@@ -24,14 +24,24 @@ def calculateBearing(lambdaOne, lambdaTwo sigmaOne, sigmaTwo, dist, radius):
     initBearing = math.degrees(math.atan2(y,x))
     return math.asin(math.sin(sigmaOne)*math.cos(dist/radius)+math.cos(sigmaOne)*math.sin(dist/radius)*math.cos(initBearing))
 
-##Get LatLon data
+##Get destination LatLon data
 def getDestination():
-    d = ""
+    line = ser.readline().strip()
+    d = line.decode()
     while d == "":
-        d = ser.readline()
+        line = ser.readline().strip()
+        d = line.decode()
         if d != "":
             break
     return d
+
+##get current location LatLon data
+def getLocation():
+    f = open("Rover.log", "r")
+    contents = f.readlines()
+    for x in contents:
+        ##parse the data
+    f.close()
 
 ##define constants
 LeftMotorForward = 0x0
@@ -42,35 +52,33 @@ latRover = 0.00
 lonRover = 0.00
 
 ##Assuming latitude and longitute are in destination separated by space
-    ##i.e. "3.456 4.567"
-destination = ""
+    ##i.e. "3.456 4.567", reads in destination latitude and longitude
+destination = getDestination()
 while destination != "exit":
     destination = getDestination()
     if destination == "exit":
         break
     latLon = destination.split()
+    latDest = latLon[0]
+    lonDest = latLon[1]
 
+    location = getLocation()
+    
+    ##variables needed for distance/bearing formulas
+    R = 6371000 ##earth's radius
+    sigma1 = math.radians(latRover)
+    sigma2 = math.radians(latDest)
+    lambda1 = math.radians(lonRover)
+    lambda2 = math.radians(lonDest)
+    diffLat = math.radians(latDest - latRover)
+    diffLon = math.radians(lonDest - lonRover)
 
-##get in destination latitude
-latDest = 0.00
-##get in destination longitude
-lonDest = 0.00
+    ##calculate distance
+    distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
 
-##variables needed for distance/bearing formulas
-R = 6371000 ##earth's radius
-sigma1 = math.radians(latRover)
-sigma2 = math.radians(latDest)
-lambda1 = math.radians(lonRover)
-lambda2 = math.radians(lonDest)
-diffLat = math.radians(latDest - latRover)
-diffLon = math.radians(lonDest - lonRover)
+    ##calculate bearing
+    bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
 
-##calculate distance
-distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
-
-##calculate bearing
-bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
-
-##Add code for turning and driving a certain distance
+    ##Add code for turning and driving a certain distance
 
 

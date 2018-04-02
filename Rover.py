@@ -1,5 +1,6 @@
 import math
 import serial
+import time
 
 ##initialize serial ports
 xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
@@ -43,8 +44,39 @@ def getLocation():
         ##parse the data
     f.close()
 
+##Motor Commands
+def turnLeft(seconds):
+	sendCommand(leftForward, fullSpeed)
+	time.sleep(seconds)
+	sendCommand(leftForward, zeroSpeed)
+	
+def turnRight(seconds):
+	sendCommand(rightForward, fullSpeed)
+	time.sleep(seconds)
+	sendCommand(rightForward, zeroSpeed)
+	
+def fullSpeedAhead(seconds):
+	sendCommand(leftForward, fullSpeed)
+	sendCommand(rightForward, fullSpeed)
+	time.sleep(seconds)
+	sendCommand(rightForward, zeroSpeed)
+	sendCommand(leftForward, zeroSpeed)
+	
+def reverse(seconds)
+	sendCommand(leftReverse, fullSpeed)
+	sendCommand(rightReverse, fullSpeed)
+	time.sleep(seconds)
+	sendCommand(rightReverse, zeroSpeed)
+	sendCommand(leftReverse, zeroSpeed)
+	
 ##define constants
-LeftMotorForward = 0x0
+leftForward = 0x08
+leftReverse = 0x0A
+rightForward = 0x0C
+rightReverse = 0x0E
+
+fullSpeed = 0x7F
+zeroSpeed = 0x00
 
 ##get in current latitude
 latRover = 0.00
@@ -80,5 +112,5 @@ while destination != "exit":
     bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
 
     ##Add code for turning and driving a certain distance
-
+	
 

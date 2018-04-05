@@ -1,10 +1,12 @@
+#!/usr/bin/python
+
 import math
 import serial
 import time
 
 ##initialize serial ports
-xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
-controller = serial.Serial('dev/serial0', 9600, timeout = .5)
+#xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
+controller = serial.Serial('/dev/serial0', 9600, timeout = .5)
 
 ##Sends command to motor controller
 def sendCommand(cmd1, cmd2):
@@ -19,7 +21,7 @@ def calculateDistance(deltaLat, deltaLon, sigmaOne, sigmaTwo, radius):
     return radius * c;
 
 ##Calculate bearing needed to turn to
-def calculateBearing(lambdaOne, lambdaTwo sigmaOne, sigmaTwo, dist, radius):
+def calculateBearing(lambdaOne, lambdaTwo, sigmaOne, sigmaTwo, dist, radius):
     y = math.sin(lambdaTwo-lambdaOne)*math.cos(sigmaTwo)
     x = math.cos(sigmaOne)*math.sin(sigmaTwo)-math.sin(sigmaOne)*math.cos(sigmaTwo)*math.cos(lambdaTwo-lambdaOne)
     initBearing = math.degrees(math.atan2(y,x))
@@ -27,11 +29,11 @@ def calculateBearing(lambdaOne, lambdaTwo sigmaOne, sigmaTwo, dist, radius):
 
 ##Get destination LatLon data
 def getDestination():
-    line = ser.readline().strip()
-    d = line.decode()
+#    line = ser.readline().strip()
+#    d = line.decode()
     while d == "":
-        line = ser.readline().strip()
-        d = line.decode()
+#        line = ser.readline().strip()
+#        d = line.decode()
         if d != "":
             break
     return d
@@ -40,9 +42,10 @@ def getDestination():
 def getLocation():
     f = open("Rover.log", "r")
     contents = f.readlines()
-    for x in contents:
-        ##parse the data
     f.close()
+    #for x in contents:
+        ##parse the data
+    #f.close()
 
 ##Motor Commands
 def turnLeft(seconds):
@@ -62,7 +65,7 @@ def fullSpeedAhead(seconds):
 	sendCommand(rightForward, zeroSpeed)
 	sendCommand(leftForward, zeroSpeed)
 	
-def reverse(seconds)
+def reverse(seconds):
 	sendCommand(leftReverse, fullSpeed)
 	sendCommand(rightReverse, fullSpeed)
 	time.sleep(seconds)
@@ -85,32 +88,36 @@ lonRover = 0.00
 
 ##Assuming latitude and longitute are in destination separated by space
     ##i.e. "3.456 4.567", reads in destination latitude and longitude
-destination = getDestination()
-while destination != "exit":
-    destination = getDestination()
-    if destination == "exit":
-        break
-    latLon = destination.split()
-    latDest = latLon[0]
-    lonDest = latLon[1]
-
-    location = getLocation()
+##destination = getDestination()
+##while destination != "exit":
+##    destination = getDestination()
+##    if destination == "exit":
+##        break
+##    latLon = destination.split()
+##    latDest = latLon[0]
+##    lonDest = latLon[1]
+##
+##    location = getLocation()
     
     ##variables needed for distance/bearing formulas
-    R = 6371000 ##earth's radius
-    sigma1 = math.radians(latRover)
-    sigma2 = math.radians(latDest)
-    lambda1 = math.radians(lonRover)
-    lambda2 = math.radians(lonDest)
-    diffLat = math.radians(latDest - latRover)
-    diffLon = math.radians(lonDest - lonRover)
+##    R = 6371000 ##earth's radius
+##    sigma1 = math.radians(latRover)
+##    sigma2 = math.radians(latDest)
+##    lambda1 = math.radians(lonRover)
+##    lambda2 = math.radians(lonDest)
+##    diffLat = math.radians(latDest - latRover)
+##    diffLon = math.radians(lonDest - lonRover)
 
     ##calculate distance
-    distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
+    #distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
 
     ##calculate bearing
-    bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
+    #bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
 
     ##Add code for turning and driving a certain distance
+fullSpeedAhead(5)
+#sendCommand(leftForward, fullSpeed)
+#time.sleep(10)
+#sendCommand(leftForward, zeroSpeed)
 	
 

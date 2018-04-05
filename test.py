@@ -20,8 +20,8 @@ def sendCommand(cmd1, cmd2):
     s.write(command[1])
 
 
-sendCommand(0x08, 0x7F) #motor 0 reverse
-sendCommand(0x0E, 0x7F) #motor 1 reverse
+sendCommand(0x08, 0x6F) #motor 0 reverse
+sendCommand(0x0E, 0x6F) #motor 1 reverse
 time.sleep(5)
 sendCommand(0x08, 0x00) #motor 0 stop
 sendCommand(0x0E, 0x00) #motor 1 stop

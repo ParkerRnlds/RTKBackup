@@ -3,43 +3,45 @@
 import math
 import serial
 import time
+import subprocess
 
-##initialize serial ports
-#xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
+#initialize serial ports
+xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
 controller = serial.Serial('/dev/serial0', 9600, timeout = .5)
 
-##Sends command to motor controller
+#Sends command to motor controller
 def sendCommand(cmd1, cmd2):
     cmd = (chr(0xAA) + chr(0x0A) + chr(cmd1) + chr(cmd2)).encode()
     command = cmd.split(b'\xc2', 1)
     controller.write(command[1])
 
-##Calculate distance between 2 points
+#Calculate distance between 2 points
 def calculateDistance(deltaLat, deltaLon, sigmaOne, sigmaTwo, radius):
     a = math.sin(deltaLat/2)*math.sin(deltaLat/2)+math.cos(sigmaOne)*math.cos(sigmaTwo)*math.sin(deltaLon/2)*math.sin(deltaLon/2)
     c = 2*math.atan2(math.sqrt(a), math.sqrt(1-a))
     return radius * c;
 
-##Calculate bearing needed to turn to
+#Calculate bearing needed to turn to
 def calculateBearing(lambdaOne, lambdaTwo, sigmaOne, sigmaTwo, dist, radius):
     y = math.sin(lambdaTwo-lambdaOne)*math.cos(sigmaTwo)
     x = math.cos(sigmaOne)*math.sin(sigmaTwo)-math.sin(sigmaOne)*math.cos(sigmaTwo)*math.cos(lambdaTwo-lambdaOne)
     initBearing = math.degrees(math.atan2(y,x))
     return math.asin(math.sin(sigmaOne)*math.cos(dist/radius)+math.cos(sigmaOne)*math.sin(dist/radius)*math.cos(initBearing))
 
-##Get destination LatLon data
+#Get destination LatLon data
 def getDestination():
-    line = ser.readline().strip()
+    line = xbee.readline().strip()
     d = line.decode()
     while d == "":
-        line = ser.readline().strip()
+        line = xbee.readline().strip()
         d = line.decode()
         if d != "":
             break
     return d
 
-##get current location LatLon data
+#get current location LatLon data
 def getLocation():
+    subprocess.call(['sudo', './rtkrcv.sh'])
     f = open("Rover.log", "r")
     contents = f.readlines()
     f.close()
@@ -47,15 +49,19 @@ def getLocation():
         ##parse the data
     f.close()
 
-##Motor Commands
+#Motor Commands
 def turnLeft(seconds):
 	sendCommand(leftForward, fullSpeed)
+	sendCommand(rightReverse, fullSpeed)
 	time.sleep(seconds)
+	sendCommand(rightReverse, zeroSpeed)
 	sendCommand(leftForward, zeroSpeed)
 	
 def turnRight(seconds):
 	sendCommand(rightForward, fullSpeed)
+	sendCommand(leftReverse, fullSpeed)
 	time.sleep(seconds)
+	sendCommand(leftReverse, zeroSpeed)
 	sendCommand(rightForward, zeroSpeed)
 	
 def fullSpeedAhead(seconds):
@@ -71,8 +77,10 @@ def reverse(seconds):
 	time.sleep(seconds)
 	sendCommand(rightReverse, zeroSpeed)
 	sendCommand(leftReverse, zeroSpeed)
-	
+
+#Read compass	
 def readCompass():
+    subprocess.call(['sudo', './compass_scr.sh'])
     f = open("compassresult.txt", "r")
     contents = f.readlines()
     for x in contents:
@@ -83,7 +91,7 @@ def readCompass():
     f.close()
     return direction
 
-##define constants
+#define constants
 leftForward = 0x08
 leftReverse = 0x0A
 rightForward = 0x0C
@@ -92,13 +100,13 @@ rightReverse = 0x0E
 fullSpeed = 0x7F
 zeroSpeed = 0x00
 
-##get in current latitude
+#get in current latitude
 latRover = 0.00
-##get in current longitude
+#get in current longitude
 lonRover = 0.00
 
-##Assuming latitude and longitute are in destination separated by space
-    ##i.e. "3.456 4.567", reads in destination latitude and longitude
+#Assuming latitude and longitute are in destination separated by space
+    #i.e. "3.456 4.567", reads in destination latitude and longitude
 destination = getDestination()
 while destination != "exit":
     destination = getDestination()
@@ -109,9 +117,12 @@ while destination != "exit":
     lonDest = latLon[1]
 
     location = getLocation()
+    latLon = location.split()
+    latRover = latLon[0]
+    lonRover = latLon[1]
     
-    variables needed for distance/bearing formulas
-    R = 6371000 ##earth's radius
+    #variables needed for distance/bearing formulas
+    R = 6371000 #earth's radius
     sigma1 = math.radians(latRover)
     sigma2 = math.radians(latDest)
     lambda1 = math.radians(lonRover)
@@ -119,17 +130,20 @@ while destination != "exit":
     diffLat = math.radians(latDest - latRover)
     diffLon = math.radians(lonDest - lonRover)
 
-    calculate distance
+    #calculate distance
     distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
-
-    calculate bearing
+    secondsForward = distance/driveSpeed
+    #calculate bearing
     bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
+    currentBearing = readCompass()
+    degreesNeeded = currentBearing - bearing;
+    secondsToTurn = math.fabs(degreesNeeded)/turnSpeed
 
-    Add code for turning and driving a certain distance
-fullSpeedAhead(5)
-sendCommand(leftForward, fullSpeed)
-time.sleep(10)
-sendCommand(leftForward, zeroSpeed)
+    #Go
+    
+    if (degreesNeeded >= 0 and degreesNeeded <= 180):
+        turnRight(secondsToTurn)
+    else:
+        turnLeft(secondsToTurn)
+    fullSpeedAhead(secondsForward)
 	
-
-p

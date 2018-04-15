@@ -1,13 +1,4 @@
-##import serial
-##import sys
-##ser = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
-##
-##while True:
-##    serialcmd = sys.stdout
-##    #ser.write(serialcmd.encode())
-##    #data_fresh = ser.readline()
-##    #print (data_fresh)
-##    print (serialcmd)
+#!/usr/bin/python3
 
 import serial
 import time
@@ -20,11 +11,17 @@ def sendCommand(cmd1, cmd2):
     s.write(command[1])
 
 
-sendCommand(0x08, 0x6F) #motor 0 reverse
-sendCommand(0x0E, 0x6F) #motor 1 reverse
-time.sleep(5)
-sendCommand(0x08, 0x00) #motor 0 stop
-sendCommand(0x0E, 0x00) #motor 1 stop
+sendCommand(0x0E, 0x7F) #motor 0 reverse
+sendCommand(0x0A, 0x7F) #motor 1 reverse
+time.sleep(0.5)
+sendCommand(0x0E, 0x00) #motor 0 stop
+sendCommand(0x0A, 0x00) #motor 1 stop
+
+##leftForward = 0x0A
+##leftReverse = 0x08
+##rightForward = 0x0C
+##rightReverse = 0x0E
 
 s.close()
+
 

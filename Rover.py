@@ -41,13 +41,15 @@ def getDestination():
 
 #get current location LatLon data
 def getLocation():
-    subprocess.call(['sudo', './rtkrcv.sh'])
-    f = open("Rover.log", "r")
-    contents = f.readlines()
-    f.close()
-    for x in contents:
+    #subprocess.call(['sudo', './rtkrcv.sh'])
+    #f = open("Rover.log", "r")
+    #contents = f.readlines()
+    #f.close()
+    #for x in contents:
         ##parse the data
-    f.close()
+    #f.close()
+    location = "30.420195 -84.317406"
+    return location
 
 #Motor Commands
 def turnLeft(seconds):
@@ -92,12 +94,12 @@ def readCompass():
     return direction
 
 #define constants
-leftForward = 0x08
-leftReverse = 0x0A
+leftForward = 0x0A
+leftReverse = 0x08
 rightForward = 0x0C
 rightReverse = 0x0E
 
-fullSpeed = 0x7F
+fullSpeed = 0x6F
 zeroSpeed = 0x00
 
 #get in current latitude
@@ -113,13 +115,13 @@ while destination != "exit":
     if destination == "exit":
         break
     latLon = destination.split()
-    latDest = latLon[0]
-    lonDest = latLon[1]
+    latDest = float(latLon[0].strip())
+    lonDest = float(latLon[1].strip())
 
     location = getLocation()
     latLon = location.split()
-    latRover = latLon[0]
-    lonRover = latLon[1]
+    latRover = float(latLon[0].strip())
+    lonRover = float(latLon[1].strip())
     
     #variables needed for distance/bearing formulas
     R = 6371000 #earth's radius
@@ -129,13 +131,17 @@ while destination != "exit":
     lambda2 = math.radians(lonDest)
     diffLat = math.radians(latDest - latRover)
     diffLon = math.radians(lonDest - lonRover)
-
+    
+    #speed variables
+    driveSpeed = 1.4986 #m/s
+    turnSpeed = 180 #deg/sec
+    
     #calculate distance
     distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
     secondsForward = distance/driveSpeed
     #calculate bearing
     bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
-    currentBearing = readCompass()
+    currentBearing = float(readCompass().strip())
     degreesNeeded = currentBearing - bearing;
     secondsToTurn = math.fabs(degreesNeeded)/turnSpeed
 

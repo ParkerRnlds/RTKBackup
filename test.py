@@ -3,7 +3,10 @@
 import serial
 import time
 
-s = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
-while True:
-    line = s.readline()
-    print(line)
+test = "3.45:6.78"
+temp = list(test)
+for i in range (0, len(temp) - 1):
+    if temp[i] == ':':
+        temp[i] = ' '
+final = ''.join(temp)
+print(final)

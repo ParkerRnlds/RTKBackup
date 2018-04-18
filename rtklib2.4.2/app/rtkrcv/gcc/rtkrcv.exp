@@ -1,0 +1,15 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+spawn ./rtkrcv
+expect "rtkrcv>"
+send -- "start\r"
+expect "overwrite rover1.log       ? (y/n): "
+send -- "y\r"
+expect "rtkrcv>"
+sleep 10
+send -- "shutdown\r"
+expect "shutdown rtkrcv process ? (y/n): "
+send -- "y\n"
+expect eof

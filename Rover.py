@@ -47,6 +47,12 @@ def getDestination():
             readLine = readLine + d
             #put space in between
         commands = readLine.split(',')
+    for i in range (0, len(commands) - 1):
+        tempList = list(commands[i])
+        for j in range (0, len(tempList) - 1):
+            if tempList[j] == ':':
+                tempList[j] = ' '
+        commands[i] = ''.join(tempList)
     print("\nNew commands: \n")
     for i in range(0, len(commands)):
         print(commands[i])
@@ -54,15 +60,56 @@ def getDestination():
 
 #get current location LatLon data
 def getLocation():
+    longitudeNegative = False
+    latitudeNegative = False
+
     print("\nReading current location...\n")
-    #subprocess.call(['sudo', './rtkrcv.sh'])
-    #f = open("Rover.log", "r")
-    #contents = f.readlines()
-    #f.close()
-    #for x in contents:
-        ##parse the data
-    #f.close()
-    location = "30.4205 -84.3180"
+    f = open("test.txt", "r")
+    contents = f.readlines()
+    locationList = contents[0].split(',')
+    latitudeDMS = locationList[2]
+    print(latitudeDMS)
+    longitudeDMS = locationList[4]
+    print(longitudeDMS)
+    if longitudeDMS[0] == '0':
+        longitudeNegative = True
+        temp = list(longitudeDMS)
+        temp[0] = '-'
+        longitudeDMS = ''.join(temp)
+    if latitudeDMS[0] == '0':
+        latitudeNegative = True
+        temp = list(latitudeDMS)
+        temp[0] = '-'
+        latitudeDMS = ''.join(temp)
+        
+    if latitudeNegative == True:
+        latDeg = latitudeDMS[0] + latitudeDMS[1] + latitudeDMS[2]
+        latMin = latitudeDMS[3] + latitudeDMS[4] + latitudeDS[5] + latitudeDMS[6] + latitudeDMS[7] + latitudeDMS[8] + latitudeDMS[9] + latitudeDMS[10]
+    else:
+        latDeg = latitudeDMS[0] + latitudeDMS[1]
+        latMin = latitudeDMS[2] + latitudeDMS[3] + latitudeDMS[4] + latitudeDMS[5] + latitudeDMS[6] + latitudeDMS[7] + latitudeDMS[8] + latitudeDMS[9]
+        
+    if longitudeNegative == True:
+        lonDeg = longitudeDMS[0] + longitudeDMS[1] + longitudeDMS[2]
+        lonMin = longitudeDMS[3] + longitudeDMS[4] + longitudeDMS[5] + longitudeDMS[6] + longitudeDMS[7] + longitudeDMS[8] + longitudeDMS[9] + longitudeDMS[10]
+    else:
+        lonDeg = longitudeDMS[0] + longitudeDMS[1]
+        lonMin = longitudeDMS[2] + longitudeDMS[3] + longitudeDMS[4] + longitudeDMS[5] + longitudeDMS[6] + longitudeDMS[7] + longitudeDMS[8] + longitudeDMS[9]
+        
+    latDeg = float(latDeg.strip())
+    latMin = float(latMin.strip())
+    lonDeg = float(lonDeg.strip())
+    lonMin = float(lonMin.strip())
+
+    latitude = math.fabs(latDeg) + math.fabs(latMin/60)
+    if latitudeNegative == True:
+        latitude = latitude * -1
+    longitude = math.fabs(lonDeg) + math.fabs(lonMin/60)
+    if longitudeNegative == True:
+        longitude = longitude * -1
+
+    location = str(latitude) + " " + str(longitude)
+    f.close()
     return location
 
 #Motor Commands

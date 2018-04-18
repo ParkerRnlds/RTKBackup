@@ -3,12 +3,13 @@
 set timeout -1
 
 spawn ./rtkrcv
-expect ""
-send -- "start"
-expect ""
-send -- "yes"
+expect "rtkrcv>"
+send -- "start\r"
+expect "overwrite rover1.log       ? (y/n):"
+send -- "y\r"
 sleep 10
-send -- "shutdown"
-expect ""
-send -- "yes"
+expect "rtkrcv>"
+send -- "shutdown\r"
+expect "shutdown rtkrcv process ? (y/n):"
+send -- "y\r"
 expect eof

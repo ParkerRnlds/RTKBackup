@@ -7,7 +7,7 @@ import time
 import subprocess
 
 #initialize serial ports
-xbee = serial.Serial('/dev/ttyUSB1', 9600, timeout = .5)
+xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
 controller = serial.Serial('/dev/serial0', 9600, timeout = .5)
 
 #Sends command to motor controller
@@ -45,6 +45,7 @@ def getDestination():
         d = line.decode()
         if d != "":
             readLine = readLine + d
+            #put space in between
         commands = readLine.split(',')
     print("\nNew commands: \n")
     for i in range(0, len(commands)):
@@ -61,7 +62,7 @@ def getLocation():
     #for x in contents:
         ##parse the data
     #f.close()
-    location = "30.420195 -84.317406"
+    location = "30.4205 -84.3180"
     return location
 
 #Motor Commands
@@ -134,8 +135,10 @@ for i in range(0, len(commands) - 1):
     latLon = commands[i].split()
     latDest = float(latLon[0].strip())
     lonDest = float(latLon[1].strip())
-
-    location = getLocation()
+    if i == 0:
+        location = getLocation()
+    else:
+        location = commands[i - 1]
     latLon = location.split()
     latRover = float(latLon[0].strip())
     lonRover = float(latLon[1].strip())
@@ -165,11 +168,13 @@ for i in range(0, len(commands) - 1):
     #calculate distance
     distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
     secondsForward = distance/driveSpeed
+    print(secondsForward)
     #calculate bearing
     bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
     currentBearing = float(readCompass().strip())
     degreesNeeded = currentBearing - bearing;
     secondsToTurn = math.fabs(degreesNeeded)/turnSpeed
+    print(secondsToTurn)
 
     #Go
     print("\nTurning...\n")

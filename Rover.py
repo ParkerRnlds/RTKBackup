@@ -124,7 +124,7 @@ latRover = 0.00
 #get in current longitude
 lonRover = 0.00
 
-#Assuming latitude and longitute are in destination separated by space
+#Assuming latitude and longitude are in destination separated by space
     #i.e. "3.456 4.567", reads in destination latitude and longitude
 print("\nWaiting for commands...\n")
 commands = getDestination()

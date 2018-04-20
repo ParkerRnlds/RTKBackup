@@ -41,7 +41,7 @@ def getDestination():
     for i in range(0, len(commands) - 1):
         print(commands[i])
     while commands[len(commands) - 1] != "exit":
-        line = xbee.readline(xbee.inWaiting()).strip()
+        line = xbee.readline().strip()
         d = line.decode()
         if d != "":
             readLine = readLine + d
@@ -56,6 +56,7 @@ def getDestination():
     print("\nNew commands: \n")
     for i in range(0, len(commands)):
         print(commands[i])
+        xbee.close()
     return commands
 
 #get current location LatLon data
@@ -113,7 +114,7 @@ def getLocation():
     return location
 
 #Motor Commands
-def turnLeft(seconds):
+def turnRight(seconds):
     print("\nTurning left\n")
     sendCommand(leftForward, fullSpeed)
     sendCommand(rightReverse, fullSpeed)
@@ -121,7 +122,7 @@ def turnLeft(seconds):
     sendCommand(rightReverse, zeroSpeed)
     sendCommand(leftForward, zeroSpeed)
 	
-def turnRight(seconds):
+def turnLeft(seconds):
     print("\nTurning right\n")
     sendCommand(rightForward, fullSpeed)
     sendCommand(leftReverse, fullSpeed)
@@ -164,7 +165,7 @@ leftReverse = 0x08
 rightForward = 0x0C
 rightReverse = 0x0E
 
-fullSpeed = 0x6F
+fullSpeed = 0x7F
 zeroSpeed = 0x00
 
 #get in current latitude
@@ -226,10 +227,13 @@ for i in range(0, len(commands) - 1):
     #Go
     print("\nTurning...\n")
     if (degreesNeeded >= 0 and degreesNeeded <= 180):
-        turnRight(secondsToTurn)
-    else:
+        time.sleep(1)
         turnLeft(secondsToTurn)
+    else:
+        time.sleep(1)
+        turnRight(secondsToTurn)
     print("\nDriving...\n")
+    time.sleep(1)
     fullSpeedAhead(secondsForward)
     print("The dark deed you requested is done, sir")
 	

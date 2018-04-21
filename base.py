@@ -4,7 +4,7 @@ import time
 #from dual_mc33926_rpi import motors
 
 xbee = serial.Serial('/dev/ttyUSB0', 9600, timeout = .5)
-serialcmd = "30.420033 -84.317676" #input("Enter Destination: ")
+serialcmd = "30.4205 -84.3180" #input("Enter Destination: ")
 def getLocations():
     choice = "n"
     while choice != "y" and choice != "Y":

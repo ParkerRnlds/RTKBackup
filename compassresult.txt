@@ -1,13 +1,11 @@
+
+
+
 #####   BerryIMUv2/LSM9DS1  DETECTED    #####
 
-magRaw X -7980    	magRaw Y 12138 	MagRaw Z 2529 
-heading 123.322 	 magRaw X -7989    	magRaw Y 12108 	MagRaw Z 2519 
-heading 123.417 	 magRaw X -8005    	magRaw Y 12153 	MagRaw Z 2562 
-heading 123.372 	 magRaw X -7996    	magRaw Y 12102 	MagRaw Z 2486 
-heading 123.453 	 magRaw X -7996    	magRaw Y 12151 	MagRaw Z 2521 
-heading 123.347 	 magRaw X -8002    	magRaw Y 12118 	MagRaw Z 2491 
-heading 123.438 	 magRaw X -8006    	magRaw Y 12124 	MagRaw Z 2511 
-heading 123.438 	 magRaw X -8006    	magRaw Y 12165 	MagRaw Z 2534 
-heading 123.350 	 magRaw X -7996    	magRaw Y 12094 	MagRaw Z 2484 
-heading 123.471 	 magRaw X -8002    	magRaw Y 12147 	MagRaw Z 2519 
-heading 123.375 	 
+magRaw X 875    	magRaw Y 382 	MagRaw Z 661 
+heading  23.585 	 magRaw X 863    	magRaw Y 401 	MagRaw Z 661 
+heading  24.922 	 magRaw X 867    	magRaw Y 400 	MagRaw Z 640 
+heading  24.767 	 magRaw X 859    	magRaw Y 396 	MagRaw Z 634 
+heading  24.750 	 magRaw X 875    	magRaw Y 396 	MagRaw Z 657 
+heading  24.350 	 

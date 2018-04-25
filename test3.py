@@ -7,7 +7,8 @@ longitudeNegative = False
 latitudeNegative = False
 
 print("\nReading current location...\n")
-f = open("test.txt", "r")
+subprocess.run(['sudo', './rtkrcv.sh'])
+f = open("location.txt", "r")
 contents = f.readlines()
 locationList = contents[0].split(',')
 latitudeDMS = locationList[2]

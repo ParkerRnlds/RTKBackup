@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	detectIMU();
 	enableIMU();
-
+	int i = 0;
 	while(1){
 		readMAG(magRaw);
 		printf("magRaw X %i    \tmagRaw Y %i \tMagRaw Z %i \n", magRaw[0],magRaw[1],magRaw[2]);
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 
 		//Sleep for 0.25ms
 		usleep(25000);
+		//i++;
 
 	}
 

@@ -65,7 +65,8 @@ def getLocation():
     latitudeNegative = False
 
     print("\nReading current location...\n")
-    f = open("test.txt", "r")
+    subprocess.run(['sudo', './rtkrcv.sh'])
+    f = open("location.txt", "r")
     contents = f.readlines()
     locationList = contents[0].split(',')
     latitudeDMS = locationList[2]
@@ -217,6 +218,7 @@ for i in range(0, len(commands) - 1):
     distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
     secondsForward = distance/driveSpeed
     print(secondsForward)
+    
     #calculate bearing
     bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
     currentBearing = float(readCompass().strip())
@@ -235,5 +237,46 @@ for i in range(0, len(commands) - 1):
     print("\nDriving...\n")
     time.sleep(1)
     fullSpeedAhead(secondsForward)
+    
+    #Correct
+    location = getLocation()
+    latLon = location.split()
+    latRover = float(latLon[0].strip())
+    lonRover = float(latLon[1].strip())
+    sigma1 = math.radians(latRover)
+    lambda1 = math.radians(lonRover)
+    diffLat = math.radians(latDest - latRover)
+    diffLon = math.radians(lonDest - lonRover)
+    distance = calculateDistance(diffLat, diffLon, sigma1, sigma2, R)
+    secondsForward = distance/driveSpeed
+    print(secondsForward)
+    #calculate bearing
+    bearing = calculateBearing(lambda1, lambda2, sigma1, sigma2, distance, R)
+    currentBearing = float(readCompass().strip())
+    degreesNeeded = currentBearing - bearing;
+    secondsToTurn = math.fabs(degreesNeeded)/turnSpeed
+    print(secondsToTurn)
+    #Go
+    print("\nTurning...\n")
+    if (degreesNeeded >= 0 and degreesNeeded <= 180):
+        time.sleep(1)
+        turnLeft(secondsToTurn)
+    else:
+        time.sleep(1)
+        turnRight(secondsToTurn)
+    print("\nDriving...\n")
+    time.sleep(1)
+    fullSpeedAhead(secondsForward)
+    time.sleep(95)
+    
+    location = getLocation()
+    latLon = location.split()
+    latRover = float(latLon[0].strip())
+    lonRover = float(latLon[1].strip())
+    print("Final location: ")
+    print("Latitude: ")
+    print(latRover)
+    print("Longitude: ")
+    print(lonRover)
     print("The dark deed you requested is done, sir")
 	
